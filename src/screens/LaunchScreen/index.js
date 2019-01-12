@@ -11,15 +11,45 @@ import {
 } from "react-native";
 import Button from "../../components/Button";
 import textStyles from "../../textStyles";
+import { ThemeConsumer } from "../../contextAPI/themeContext";
+import testHOC from "../../HOC/testHOC";
 
 class App extends Component {
   static displayName = "App";
 
+  static navigationOptions = () => ({
+    header: null,
+    headerBackTitle: "Launch"
+  });
+
+  constructor(props) {
+    super(props);
+    props.changeLanguage("en");
+  }
+
+  test() {
+    console.log("text");
+  }
+
   render() {
+    const { language } = this.props;
+    console.warn("language", language);
+    console.warn("this.props.userID", this.props.userID);
     return (
       <SafeAreaView
         style={{ flex: 1, backgroundColor: "#f4f2fb", alignItems: "center" }}
       >
+        <ThemeConsumer>
+          {value => (
+            <View>
+              <Text>{value.theme}</Text>
+              <Button
+                value="Change Theme"
+                onPress={() => value.changeTheme("dark")}
+              />
+            </View>
+          )}
+        </ThemeConsumer>
         <View style={{ flex: 2, justifyContent: "center" }}>
           <Image
             source={require("../../assets/images/logo.png")}
@@ -51,4 +81,4 @@ class App extends Component {
 
 App.propTypes = {};
 
-export default App;
+export default testHOC(App);

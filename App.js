@@ -1,24 +1,38 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { PureComponent } from "react";
+import { YellowBox } from "react-native";
 import {
-  View,
-  Text,
-  SafeAreaView,
-  StatusBar,
-  Image,
-  TouchableOpacity,
-  Platform
-} from "react-native";
-import AppContainer from "./src/navigation";
+  reduxifyNavigator,
+  createReactNavigationReduxMiddleware
+} from "react-navigation-redux-helpers";
+import { Provider, connect } from "react-redux";
 
-class App extends Component {
-  static displayName = "App";
+import Navigator from "./src/navigation";
+import configureStore from "./src/configureStore";
+import ThemeContext from "./src/contextAPI/themeContext";
+
+const middleware = createReactNavigationReduxMiddleware(
+  "root",
+  state => state.nav
+);
+
+const Root = reduxifyNavigator(Navigator, "root");
+const mapStateToProps = state => ({
+  state: state.nav
+});
+const AppWithNavigationState = connect(mapStateToProps)(Root);
+
+const store = configureStore(middleware);
+
+export default class App extends PureComponent {
+  state = {};
 
   render() {
-    return <AppContainer />;
+    return (
+      <Provider store={store}>
+        <ThemeContext>
+          <AppWithNavigationState />
+        </ThemeContext>
+      </Provider>
+    );
   }
 }
-
-App.propTypes = {};
-
-export default App;
