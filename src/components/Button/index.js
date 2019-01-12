@@ -8,10 +8,10 @@ import {
   ViewPropTypes
 } from "react-native";
 
-const index = ({ containerStyle, textStyle, value }) => {
+const index = ({ containerStyle, textStyle, value, onPress }) => {
   return (
     <View style={{ paddingHorizontal: 30 }}>
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity onPress={onPress}>
         <View
           style={[
             {
