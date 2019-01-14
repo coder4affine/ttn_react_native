@@ -1,36 +1,33 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { View, Text, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  AsyncStorage
+} from "react-native";
+import * as Keychain from "react-native-keychain";
 import { SafeAreaView } from "react-navigation";
 import textStyles from "../../textStyles";
 import Textbox from "../../components/Textbox";
 import Picker from "../../components/Dropdown/dropdown";
 import testHOC from "../../HOC/testHOC";
+import Form from "./registrationForm";
 
-const data = [
-  {
-    text: "Select Gender",
-    value: ""
-  },
-  {
-    text: "Male",
-    value: "male"
-  },
-  {
-    text: "Female",
-    value: "female"
-  },
-  {
-    text: "Third Gender",
-    value: "thirdGender"
-  }
-];
-
-class index extends Component {
+class index extends PureComponent {
   static propTypes = {};
 
   state = {
-    value: ""
+    form: {
+      firstName: "",
+      lastName: "",
+      gender: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
+    },
+    token: ""
   };
 
   static navigationOptions = () => ({
@@ -38,13 +35,47 @@ class index extends Component {
     headerTransparent: true
   });
 
-  test() {
-    console.log("text");
+  static getDerivedStateFromProps(nextProps, prevState) {}
+
+  constructor(props) {
+    super(props);
+
+    Keychain.getGenericPassword().then(data => {
+      console.warn(data);
+    });
   }
+
+  componentDidMount() {}
+
+  componentWillUnmount() {}
+
+  submit = async value => {
+    const username = "zuck";
+    const password = "poniesRgr8";
+
+    // Store the credentials
+    await Keychain.setGenericPassword(username, password);
+  };
 
   render() {
     console.warn("language", this.props.language);
     console.warn("this.props.userID", this.props.userID);
+
+    let kav = {};
+    if (OS === "ios") {
+      kav = {
+        behavior: "padding",
+        enabled: true
+      };
+    }
+
+    if (this.state.token) {
+      return (
+        <View>
+          <Text>{`I have a token  ${this.state.token}`}</Text>
+        </View>
+      );
+    }
     return (
       <SafeAreaView style={{ flex: 1 }} forceInset={{ top: "never" }}>
         <View
@@ -59,30 +90,14 @@ class index extends Component {
             Register
           </Text>
         </View>
-        <ScrollView style={{ flex: 1 }}>
-          <Textbox
-            label="Name"
-            value="Yagnesh"
-            onChangeText={() => {}}
-            placeholder="Name"
-          />
-          <Textbox
-            label="Password"
-            value="Yagnesh"
-            onChangeText={() => {}}
-            placeholder="Password"
-            secureTextEntry
-          />
-          <Picker
-            data={data}
-            label="Gender"
-            value={this.state.value}
-            onChange={(name, value) => this.setState({ value })}
-          />
-        </ScrollView>
+        <KeyboardAvoidingView style={{ flex: 1 }} {...kav}>
+          <ScrollView style={{ flex: 1 }}>
+            <Form initialValues={this.state.form} onSubmit={this.submit} />
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
 }
 
-export default testHOC(index);
+export default index;

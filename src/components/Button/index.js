@@ -5,13 +5,21 @@ import {
   Text,
   TouchableOpacity,
   Platform,
-  ViewPropTypes
+  ViewPropTypes,
+  ActivityIndicator
 } from "react-native";
 
-const index = ({ containerStyle, textStyle, value, onPress }) => {
+const index = ({
+  containerStyle,
+  textStyle,
+  value,
+  onPress,
+  disabled,
+  loading
+}) => {
   return (
     <View style={{ paddingHorizontal: 30 }}>
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={() => !disabled && onPress()}>
         <View
           style={[
             {
@@ -20,6 +28,7 @@ const index = ({ containerStyle, textStyle, value, onPress }) => {
               justifyContent: "center",
               alignItems: "center",
               borderRadius: 10,
+              opacity: disabled ? 0.6 : 1,
               ...Platform.select({
                 ios: {
                   shadowColor: "rgba(0,0,0, .2)",
@@ -35,6 +44,7 @@ const index = ({ containerStyle, textStyle, value, onPress }) => {
             containerStyle
           ]}
         >
+          {loading && <ActivityIndicator />}
           <Text
             style={[
               {

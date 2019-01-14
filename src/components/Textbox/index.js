@@ -1,51 +1,89 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { TextInput, View, Text } from "react-native";
+import { View, Text, TextInput } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 
-export default class index extends Component {
-  static propTypes = {};
+export class textInput extends PureComponent {
+  static propTypes = {
+    label: PropTypes.string.isRequired,
+    error: PropTypes.string,
+    inputRef: PropTypes.func
+  };
+
+  static defaultProps = {
+    inputRef: () => {},
+    onTouch: () => {}
+  };
+
+  static height = 10;
+
+  test = () => {
+    alert("test");
+  };
+
+  onChange = value => {
+    this.props.onChange(this.props.name, value);
+  };
+
+  onFocus = () => {
+    this.textInput.setNativeProps({
+      style: {
+        borderWidth: 1,
+        borderColor: "#6d55c0"
+      }
+    });
+  };
+
+  onBlur = () => {
+    this.props.onTouch(this.props.name);
+    this.textInput.setNativeProps({
+      style: {
+        borderWidth: 0
+      }
+    });
+  };
 
   render() {
-    const { label, placeholder, value, onChangeText, error } = this.props;
+    const { label, error, iconName, inputRef, ...rest } = this.props;
     return (
-      <View>
-        {label && (
-          <Text
-            style={{
+      <View
+        style={{
+          marginVertical: 8
+        }}
+      >
+        <Text
+          style={[
+            {
               fontWeight: "500",
-              fontSize: 14,
+              fontSize: FONT(12),
               color: "#777777",
               marginBottom: 7
+            }
+          ]}
+        >
+          {label}
+        </Text>
+        {iconName && (
+          <View
+            style={{
+              position: "absolute",
+              right: OS === "ios" ? 10 : 12,
+              top: OS === "ios" ? 30 : 40,
+              zIndex: 1
             }}
           >
-            {label}
-          </Text>
+            <Icon name={iconName} size={24} />
+          </View>
         )}
         <TextInput
-          {...this.props}
-          accessible
-          accessibilityLabel={label}
-          autoCapitalize="none"
-          ref={el => {
-            this.input = el;
+          onChangeText={this.onChange}
+          ref={ref => {
+            this.textInput = ref;
+            inputRef(ref);
           }}
-          onFocus={() => {
-            this.input.setNativeProps({
-              style: {
-                borderWidth: 1,
-                borderColor: "#6d55c0"
-              }
-            });
-          }}
-          onBlur={e => {
-            this.input.setNativeProps({
-              style: {
-                borderWidth: 0
-              }
-            });
-          }}
-          value={value}
-          underlineColorAndroid="transparent"
+          placeholder={label}
+          onFocus={this.onFocus}
+          onBlur={this.onBlur}
           style={{
             borderRadius: 4,
             borderWidth: 1,
@@ -53,10 +91,15 @@ export default class index extends Component {
             backgroundColor: "#f4f2fb",
             padding: 8
           }}
-          onChangeText={onChangeText}
+          underlineColorAndroid="transparent"
+          {...rest}
         />
-        {error && <Text>{error}</Text>}
+        {error && (
+          <Text style={{ color: "red", fontSize: FONT(9) }}>{error}</Text>
+        )}
       </View>
     );
   }
 }
+
+export default textInput;

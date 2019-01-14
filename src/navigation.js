@@ -3,6 +3,7 @@ import { createStackNavigator, createAppContainer } from "react-navigation";
 import LaunchScreen from "./screens/LaunchScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import ListView from "./screens/ListView";
 
 const AppNavigator = createStackNavigator({
   Launch: {
@@ -13,6 +14,9 @@ const AppNavigator = createStackNavigator({
   },
   Register: {
     screen: RegisterScreen
+  },
+  ListView: {
+    screen: ListView
   }
 });
 

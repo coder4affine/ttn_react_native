@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Platform
 } from "react-native";
+import { RNCamera } from "react-native-camera";
 import Button from "../../components/Button";
 import textStyles from "../../textStyles";
 import { ThemeConsumer } from "../../contextAPI/themeContext";
@@ -22,9 +23,12 @@ class App extends Component {
     headerBackTitle: "Launch"
   });
 
+  state = {
+    camera: false
+  };
+
   constructor(props) {
     super(props);
-    props.changeLanguage("en");
   }
 
   test() {
@@ -33,12 +37,32 @@ class App extends Component {
 
   render() {
     const { language } = this.props;
+    const { camera } = this.state;
     console.warn("language", language);
     console.warn("this.props.userID", this.props.userID);
     return (
       <SafeAreaView
         style={{ flex: 1, backgroundColor: "#f4f2fb", alignItems: "center" }}
       >
+        {camera && (
+          <RNCamera
+            ref={ref => {
+              this.camera = ref;
+            }}
+            style={{
+              height: HEIGHT,
+              width: WIDTH,
+              position: "absolute",
+              zIndex: 10
+            }}
+            type={RNCamera.Constants.Type.back}
+            flashMode={RNCamera.Constants.FlashMode.on}
+            permissionDialogTitle={"Permission to use camera"}
+            permissionDialogMessage={
+              "We need your permission to use your camera phone"
+            }
+          />
+        )}
         <ThemeConsumer>
           {value => (
             <View>
@@ -65,7 +89,7 @@ class App extends Component {
             value="Login"
             textStyle={{ color: "#fff" }}
             containerStyle={{ backgroundColor: "#2F2844", marginBottom: 24 }}
-            onPress={() => this.props.navigation.navigate("Login")}
+            onPress={() => this.setState({ camera: true })}
           />
           <Button
             value="Register"
@@ -81,4 +105,4 @@ class App extends Component {
 
 App.propTypes = {};
 
-export default testHOC(App);
+export default App;
